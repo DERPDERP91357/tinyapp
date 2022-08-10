@@ -11,19 +11,24 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
       />
+    <style>
+      td, th{
+        text-align: center;
+      }
+    </style>
       <title>TinyApp</title>
   </head>
   <body>
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
-      <table class="table">
+      <table class="table table-info">
         <thead>
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
-            <th scope="col">EDIT</th>
-            <th scope="col">DELETE</th>
+            <th class = "div1" scope="col">EDIT</th>
+            <th class = "div1" scope="col">DELETE</th>
           </tr>
         </thead>
         <tbody>
