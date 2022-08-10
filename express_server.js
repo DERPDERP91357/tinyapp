@@ -11,13 +11,22 @@ app.use(express.urlencoded({ extended: true }));//body  parser library to conver
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-//id generator function
+//functions
 const generateRandomString = function() { //generates random string of 6 characters
   let x = [];
   for (let i = 0; i < 6; i++) {
     x.push(Math.floor(Math.random() * 36).toString(36));
   }
   return x.join('');
+};
+
+const matchExistingUser = function (inputEmail) {
+  for (let user in users) {
+    if (users[user].email === inputEmail) {
+      return users[user];
+    }
+  }
+  return null;
 };
 
 //databases
@@ -115,11 +124,17 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  let id = generateRandomString() + generateRandomString();
-  let {email, password} = req.body;
-  users[id] = {id, email, password};
-  res.cookie('user_id', id);
-  res.redirect("/urls");
+  if (matchExistingUser(req.body.email) === null) {
+    let id = generateRandomString() + generateRandomString();
+    let {email, password} = req.body;
+    if (email.length === 0 || password.length === 0) {
+      return res.status(400).send("Invalid registration information");
+    }
+    users[id] = {id, email, password};
+    res.cookie('user_id', id);
+    res.redirect("/urls");
+  }
+  return res.status(400).send("Email has already been used!");
 });
 
 
