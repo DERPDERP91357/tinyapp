@@ -20,13 +20,21 @@ const generateRandomString = function() { //generates random string of 6 charact
   return x.join('');
 };
 
-const matchExistingUser = function (inputEmail) {
+const matchFromDatabase = function (key, input) {
   for (let user in users) {
-    if (users[user].email === inputEmail) {
+    if (users[user][key] === input) {
       return users[user];
     }
   }
   return null;
+};
+
+const matchExistingUser = function (inputEmail) {
+  return matchFromDatabase("email", inputEmail);
+};
+
+const matchExistingPassword = function (inputPassword) {
+  return matchFromDatabase("password", inputPassword);
 };
 
 //databases
@@ -106,8 +114,12 @@ app.post("/urls/:id/delete", (req, res) => {
 //account login and logout
 app.post("/login", (req, res) => {
   let currentUser = matchExistingUser(req.body.email);
+  let currentPass = matchExistingPassword(req.body.password);
   if (currentUser === null) {
-    res.status(400).send("Invalid login information!")
+    res.status(403).send("Invalid login information!")
+  }
+  if (currentPass === null) {
+    res.status(403).send("Invalid login information!")
   }
   res.cookie("user_id", currentUser.id);
   res.redirect(`/urls`);
@@ -148,8 +160,6 @@ app.post("/register", (req, res) => {
   return res.status(400).send("Email has already been used!");
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
