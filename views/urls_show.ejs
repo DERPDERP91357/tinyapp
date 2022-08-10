@@ -21,6 +21,12 @@
         </p>
       </div>
       <div class="card-footer text-muted"><a href = '#'>Make new shortened link!</a></div>
+      <div>
+        <form method="POST" action= "/urls/<%= id %>">
+          <input type= text name = "new_URL" required>
+          <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
+      </div>
     </div>
     <script
     src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

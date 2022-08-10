@@ -5,6 +5,7 @@ const PORT = 8080;
 app.set("view engine", "ejs")
 app.use(express.urlencoded({ extended: true }));//body  parser library to convert buffer to string
 
+
 function generateRandomString() { //generates random string of 6 characters
   let x = [];
   for (let i = 0; i < 6; i++) {
@@ -54,6 +55,11 @@ app.get("/u/:id", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
+});
+
+app.post("/urls/:id", (req, res) => {
+  urlDatabase[req.params.id] = req.body.new_URL;
+  res.redirect(`/urls`);
 });
 
 app.get("/hello", (req, res) => {
