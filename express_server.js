@@ -105,8 +105,19 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //account login and logout
 app.post("/login", (req, res) => {
-  res.cookie("user_id", req.body.user_id);
+  let currentUser = matchExistingUser(req.body.email);
+  if (currentUser === null) {
+    res.status(400).send("Invalid login information!")
+  }
+  res.cookie("user_id", currentUser.id);
   res.redirect(`/urls`);
+});
+
+app.get("/login", (req, res) => {
+  const templateVars = {
+    username: users[req.cookies.user_id]
+  };  
+  res.render("urls_login", templateVars);
 });
 
 app.post("/logout", (req, res) => {
@@ -131,11 +142,13 @@ app.post("/register", (req, res) => {
       return res.status(400).send("Invalid registration information");
     }
     users[id] = {id, email, password};
-    res.cookie('user_id', id);
+    res.cookie("user_id", id);
     res.redirect("/urls");
-  }
+  } else {
   return res.status(400).send("Email has already been used!");
+  }
 });
+
 
 
 app.listen(PORT, () => {
