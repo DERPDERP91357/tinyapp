@@ -1,12 +1,17 @@
+//setup
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const morgan = require ("morgan")
 const app = express();
 const PORT = 8080;
 
+//middleware
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));//body  parser library to convert buffer to string
 app.use(cookieParser());
+app.use(morgan('dev'));
 
+//id generator function
 const generateRandomString = function() { //generates random string of 6 characters
   let x = [];
   for (let i = 0; i < 6; i++) {
@@ -21,18 +26,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const user = {
-  // userid1:{
-  //   id,
-  //   email,
-  //   password
-  // },
-  // userid2:{
-  //   id,
-  //   email,
-  //   password
-  // }
-};
+const users = {};
 
 //misc test pages used in initial setup
 app.get("/", (req, res) => {
@@ -52,7 +46,7 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies.username
+    username: users[req.cookies.user_id]
   };
   res.render("urls_index", templateVars);
 });
@@ -67,7 +61,7 @@ app.post("/urls", (req, res) => {
 //create new links
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username: req.cookies.username
+    username: users[req.cookies.user_id]
   };
   res.render("urls_new", templateVars);
 });
@@ -78,7 +72,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies.username
+    username: users[req.cookies.user_id]
   };
   res.render("urls_show", templateVars);
 });
@@ -102,12 +96,12 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //account login and logout
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  res.cookie("user_id", req.body.user_id);
   res.redirect(`/urls`);
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
@@ -115,23 +109,16 @@ app.post("/logout", (req, res) => {
 //registration
 app.get("/register", (req, res) => {
   const templateVars = {
-    username: req.cookies.username
-  };
+    username: users[req.cookies.user_id]
+  };  
   res.render("urls_register", templateVars);
 });
 
 app.post("/register", (req, res) => {
-  //find values for id email and password
-    //find id 
-    let id = generateRandomString() + generateRandomString();
-    console.log (id);
-    // find email and password
-    let {email, password} = req.body;
-    console.log(email, password);
-  //set cookie with user id 
-  //add to object user
-  //print user object
-  //test user id cookie
+  let id = generateRandomString() + generateRandomString();
+  let {email, password} = req.body;
+  users[id] = {id, email, password};
+  res.cookie('user_id', id);
   res.redirect("/urls");
 });
 
