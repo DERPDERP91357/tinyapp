@@ -1,7 +1,7 @@
 //setup
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const morgan = require ("morgan")
+const morgan = require ("morgan");
 const app = express();
 const PORT = 8080;
 
@@ -37,13 +37,38 @@ const matchExistingPassword = function (inputPassword) {
   return matchFromDatabase("password", inputPassword);
 };
 
-//databases
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+const urlsForUser = function (id) {
+  let x = {};
+  for (let member in urlDatabase) {
+    if (urlDatabase[member].userID === id){
+      x[member] = (urlDatabase[member]);
+    }
+  }
+  return x;
 };
 
-const users = {};
+//databases
+const urlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "sfe2sg23rt23",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "sfe2sg23rt23",
+  },
+  iadf0r: {
+    longURL: "https://www.wanikani.com",
+    userID: "afe2sg23rt23",
+  }
+};
+const users = {
+  sfe2sg23rt23 : {
+    id : 'sfe2sg23rt23',
+    email : 'apple@com',
+    password : 'apple'
+  }
+};
 
 //misc test pages used in initial setup
 app.get("/", (req, res) => {
@@ -62,7 +87,7 @@ app.get("/hello", (req, res) => {
 //main page
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(req.cookies.user_id),
     username: users[req.cookies.user_id]
   };
   res.render("urls_index", templateVars);
@@ -73,7 +98,10 @@ app.post("/urls", (req, res) => {
     return res.status(403).send("Only Registered Users May Create New Shortened Links!!")
   }
   let x = generateRandomString();
-  urlDatabase[x] = req.body.longURL;
+  urlDatabase[x] = {
+    longURL : req.body.longURL,
+    userID : req.cookies.user_id
+  };
   res.redirect(`/urls/${x}`);
 });
 
@@ -95,22 +123,28 @@ app.get("/urls/:id", (req, res) => {
   if (!urlDatabase[req.params.id]){
     return res.status(400).send("Shortened Link ID Does Not Exist!!");
   }
+  if(!req.cookies.user_id){
+    return res.status(401).send("Shortened Link can only be used by Registered Users!!");
+  }
+  if(req.cookies.user_id !== urlDatabase[req.params.id].userID){
+    return res.status(401).send("Users may only access their own links!!");
+  }
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     username: users[req.cookies.user_id]
   };
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = req.body.new_URL;
+  urlDatabase[req.params.id].longURL = req.body.new_URL;
   res.redirect(`/urls`);
 });
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
+  const URL = urlDatabase[req.params.id].longURL;
+  res.redirect(URL);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -177,5 +211,5 @@ app.post("/register", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tinyapp is now listening on port ${PORT}!`);
 });

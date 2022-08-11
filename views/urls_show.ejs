@@ -20,7 +20,7 @@
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
       </div>
-      <div class="card-footer text-muted"><a href = '#'>Make new shortened link!</a></div>
+      <div class="card-footer text-muted"><a href = '/urls/new'>Make new shortened link!</a></div>
       <div>
         <form method="POST" action= "/urls/<%= id %>">
           <input type= text name = "new_URL" required>

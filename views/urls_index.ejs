@@ -12,7 +12,7 @@
       crossorigin="anonymous"
       />
     <style>
-      td, th{
+      td, th, h4{
         text-align: center;
       }
     </style>
@@ -22,35 +22,41 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
-      <table class="table table-info">
-        <thead>
-          <tr>
-            <th scope="col">Short URL ID</th>
-            <th scope="col">Long URL</th>
-            <th class = "div1" scope="col">EDIT</th>
-            <th class = "div1" scope="col">DELETE</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (let id in urls) { %>
+      <% if (username) { %>
+        <table class="table table-info">
+          <thead>
             <tr>
-              <td><%= id %></td>
-              <td><%= urls[id] %></td>
-              <td>
-                  <form action= "/urls/<%= id %>">
-                    <button type="submit" class="btn btn-primary">Edit</button>
-                  </form>
-              </td>
-              <td>
-                <form method="POST" action= "/urls/<%= id %>/delete">
-                  <button type="submit" class="btn btn-danger" formmethod="POST">Delete</button>
-                </form>
-              </td>
+              <th scope="col">Short URL ID</th>
+              <th scope="col">Long URL</th>
+              <th class = "div1" scope="col">EDIT</th>
+              <th class = "div1" scope="col">DELETE</th>
             </tr>
-          <% } %>
-          <a href = '/urls/new'>Make new shortened link!</a>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% for (let id in urls) { %>
+              <tr>
+              <% if (urls[id].userID === username.id){ %>
+                <td><%= id %></td>
+                <td><%= urls[id].longURL %></td>
+                <td>
+                    <form action= "/urls/<%= id %>">
+                      <button type="submit" class="btn btn-primary">Edit</button>
+                    </form>
+                </td>
+                <td>
+                  <form method="POST" action= "/urls/<%= id %>/delete">
+                    <button type="submit" class="btn btn-danger" formmethod="POST">Delete</button>
+                  </form>
+                </td>
+                <% } %>
+              </tr>
+            <% } %>
+            <a href = '/urls/new'>Make new shortened link!</a>
+          </tbody>
+        </table>
+      <% } else { %>
+        <h4>You are not Logged In. Please <a href="/login">Login</a> or <a href="/register">Register</a> to Create Links!!</h4>
+      <% } %>
     </main>
     <script
     src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
