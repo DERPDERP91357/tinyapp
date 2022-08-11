@@ -26,9 +26,9 @@
       <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
     </div>
   </div>
-  <% if(username){ %>
+  <% if(userObj){ %>
   <div id = "div1">
-    <button id ="user" type="button" class="btn btn-outline-primary btn-lg">Logged in as: <b><%= username.email %></b></button>
+    <button id ="user" type="button" class="btn btn-outline-primary btn-lg">Logged in as: <b><%= userObj.email %></b></button>
   </div>
   <div>
     <form method = "POST" action = "/logout">

@@ -23,7 +23,7 @@
       <div class="card-footer text-muted"><a href = '/urls/new'>Make new shortened link!</a></div>
       <div>
         <form method="POST" action= "/urls/<%= id %>">
-          <input type= text name = "new_URL" required>
+          <input type= url name = "new_URL" required>
           <button type="submit" class="btn btn-primary">Edit</button>
         </form>
       </div>

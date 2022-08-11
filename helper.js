@@ -1,4 +1,4 @@
-const matchExistingUser = function (inputEmail, database) {
+const matchExistingUser = function(inputEmail, database) {
   for (let user in database) {
     if (database[user].email === inputEmail) {
       return database[user];
@@ -14,4 +14,16 @@ const generateRandomString = function() { //generates random string of 6 charact
   return x.join('');
 };
 
-module.exports = {generateRandomString, matchExistingUser};
+
+const urlsForUser = function(id, database) {
+  let x = {};
+  for (let member in database) {
+    if (database[member].userID === id) {
+      x[member] = (database[member]);
+    }
+  }
+  return x;
+};
+
+
+module.exports = {matchExistingUser, generateRandomString, urlsForUser};
