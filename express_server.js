@@ -138,6 +138,15 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
+  if (!urlDatabase[req.params.id]){
+    return res.status(400).send("Shortened Link ID Does Not Exist!!");
+  }
+  if(!req.cookies.user_id){
+    return res.status(401).send("Shortened Link can only be edited by Registered Users!!");
+  }
+  if(req.cookies.user_id !== urlDatabase[req.params.id].userID){
+    return res.status(401).send("Users can only edit their own links!!");
+  }
   urlDatabase[req.params.id].longURL = req.body.new_URL;
   res.redirect(`/urls`);
 });
