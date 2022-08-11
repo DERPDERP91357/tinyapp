@@ -90,7 +90,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 
-//link specific page
+//link specific pages
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase[req.params.id]){
     return res.status(400).send("Shortened Link ID Does Not Exist!!");
