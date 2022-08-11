@@ -18,23 +18,9 @@ app.use(sessionession({
 }))
 
 //functions
-const generateRandomString = function() { //generates random string of 6 characters
-  let x = [];
-  for (let i = 0; i < 6; i++) {
-    x.push(Math.floor(Math.random() * 36).toString(36));
-  }
-  return x.join('');
-};
 
-const matchExistingUser = function (inputEmail) {
-  for (let user in users) {
-    if (users[user].email === inputEmail) {
-      return users[user];
-    }
-  }
-  return null;
-};
 
+const {generateRandomString, matchExistingUser} = require ("./helper");
 
 const urlsForUser = function (id) {
   let x = {};
@@ -173,14 +159,13 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //account login and logout
 app.post("/login", (req, res) => {
-  console.log (req.body);
-  let currentUser = matchExistingUser(req.body.email);
+  let currentUser = matchExistingUser(req.body.email, users);
   let currentPass = bcrypt.compareSync(req.body.password, currentUser.hashedPass);
   console.log(currentPass);
-  if (currentUser === null) {
+  if (!currentUser) {
     return res.status(403).send("Invalid login information (username)!!")
   }
-  if (currentPass === false) {
+  if (!currentPass) {
     return res.status(403).send("Invalid login information (password)!!")
   }
   req.session.user_id = currentUser.id;
@@ -215,16 +200,15 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  if (matchExistingUser(req.body.email) === null) {
+  if (!matchExistingUser(req.body.email, users)) {
     let id = generateRandomString() + generateRandomString();
     let {email, password} = req.body;
     if (email.length === 0 || password.length === 0) {
       return res.status(400).send("Invalid registration information");
     }
     let hashedPass = bcrypt.hashSync(password, 10);
-    console.log(hashedPass);
     users[id] = {id, email, hashedPass};
-    res.cookie("user_id", id);
+    req.session.user_id = id;
     res.redirect("/urls");
   } else {
   return res.status(400).send("Email has already been used!");
