@@ -69,6 +69,9 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  if(!req.cookies.user_id){
+    return res.status(403).send("Only Registered Users May Create New Shortened Links!!")
+  }
   let x = generateRandomString();
   urlDatabase[x] = req.body.longURL;
   res.redirect(`/urls/${x}`);
@@ -77,6 +80,9 @@ app.post("/urls", (req, res) => {
 
 //create new links
 app.get("/urls/new", (req, res) => {
+  if(!req.cookies.user_id){
+    return res.redirect("/login");
+  }
   const templateVars = {
     username: users[req.cookies.user_id]
   };
@@ -86,6 +92,9 @@ app.get("/urls/new", (req, res) => {
 
 //link specific page
 app.get("/urls/:id", (req, res) => {
+  if (!urlDatabase[req.params.id]){
+    return res.status(400).send("Shortened Link ID Does Not Exist!!");
+  }
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
@@ -116,16 +125,19 @@ app.post("/login", (req, res) => {
   let currentUser = matchExistingUser(req.body.email);
   let currentPass = matchExistingPassword(req.body.password);
   if (currentUser === null) {
-    res.status(403).send("Invalid login information!")
+    return res.status(403).send("Invalid login information!")
   }
   if (currentPass === null) {
-    res.status(403).send("Invalid login information!")
+    return res.status(403).send("Invalid login information!")
   }
   res.cookie("user_id", currentUser.id);
   res.redirect(`/urls`);
 });
 
 app.get("/login", (req, res) => {
+  if(req.cookies.user_id){
+     return res.redirect("/urls");
+  }
   const templateVars = {
     username: users[req.cookies.user_id]
   };  
@@ -140,6 +152,9 @@ app.post("/logout", (req, res) => {
 
 //registration
 app.get("/register", (req, res) => {
+  if(req.cookies.user_id){
+    return res.redirect("/urls");
+  }
   const templateVars = {
     username: users[req.cookies.user_id]
   };  
