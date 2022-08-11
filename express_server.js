@@ -1,6 +1,6 @@
 //setup
 const express = require('express');
-const cookieParser = require('cookie-parser');
+const sessionession = require('cookie-session');
 const bcrypt = require("bcryptjs");
 const morgan = require ("morgan");
 const app = express();
@@ -9,8 +9,13 @@ const PORT = 8080;
 //middleware
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));//body  parser library to convert buffer to string
-app.use(cookieParser());
 app.use(morgan('dev'));
+//sets cookie session named 'session"
+app.use(sessionession({
+  name: 'session',
+  keys: ['1a535d9f-a610-4f90-b613-204dcd956328'], //key generated using 'npx uuid' from the command line
+  maxAge: 24 * 60 * 60 * 1000
+}))
 
 //functions
 const generateRandomString = function() { //generates random string of 6 characters
@@ -81,20 +86,20 @@ app.get("/hello", (req, res) => {
 //main page
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlsForUser(req.cookies.user_id),
-    username: users[req.cookies.user_id]
+    urls: urlsForUser(req.session.user_id),
+    username: users[req.session.user_id]
   };
   res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-  if(!req.cookies.user_id){
+  if(!req.session.user_id){
     return res.status(403).send("Only Registered Users May Create New Shortened Links!!")
   }
   let x = generateRandomString();
   urlDatabase[x] = {
     longURL : req.body.longURL,
-    userID : req.cookies.user_id
+    userID : req.session.user_id
   };
   res.redirect(`/urls/${x}`);
 });
@@ -102,11 +107,11 @@ app.post("/urls", (req, res) => {
 
 //create new links
 app.get("/urls/new", (req, res) => {
-  if(!req.cookies.user_id){
+  if(!req.session.user_id){
     return res.redirect("/login");
   }
   const templateVars = {
-    username: users[req.cookies.user_id]
+    username: users[req.session.user_id]
   };
   res.render("urls_new", templateVars);
 });
@@ -117,16 +122,16 @@ app.get("/urls/:id", (req, res) => {
   if (!urlDatabase[req.params.id]){
     return res.status(400).send("Shortened Link ID Does Not Exist!!");
   }
-  if(!req.cookies.user_id){
+  if(!req.session.user_id){
     return res.status(401).send("Shortened Link can only be used by Registered Users!!");
   }
-  if(req.cookies.user_id !== urlDatabase[req.params.id].userID){
+  if(req.session.user_id !== urlDatabase[req.params.id].userID){
     return res.status(401).send("Users may only access their own links!!");
   }
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
-    username: users[req.cookies.user_id]
+    username: users[req.session.user_id]
   };
   res.render("urls_show", templateVars);
 });
@@ -135,10 +140,10 @@ app.post("/urls/:id", (req, res) => {
   if (!urlDatabase[req.params.id]){
     return res.status(400).send("Shortened Link ID Does Not Exist!!");
   }
-  if(!req.cookies.user_id){
+  if(!req.session.user_id){
     return res.status(401).send("Shortened Link can only be edited by Registered Users!!");
   }
-  if(req.cookies.user_id !== urlDatabase[req.params.id].userID){
+  if(req.session.user_id !== urlDatabase[req.params.id].userID){
     return res.status(401).send("Users can only edit their own links!!");
   }
   urlDatabase[req.params.id].longURL = req.body.new_URL;
@@ -154,10 +159,10 @@ app.post("/urls/:id/delete", (req, res) => {
   if (!urlDatabase[req.params.id]){
     return res.status(400).send("Shortened Link ID Does Not Exist!!");
   }
-  if(!req.cookies.user_id){
+  if(!req.session.user_id){
     return res.status(401).send("Shortened Link can only be deleted by Registered Users!!");
   }
-  if(req.cookies.user_id !== urlDatabase[req.params.id].userID){
+  if(req.session.user_id !== urlDatabase[req.params.id].userID){
     return res.status(401).send("Users can only delete their own links!!");
   }
   delete urlDatabase[req.params.id];
@@ -178,33 +183,33 @@ app.post("/login", (req, res) => {
   if (currentPass === false) {
     return res.status(403).send("Invalid login information (password)!!")
   }
-  res.cookie("user_id", currentUser.id);
+  req.session.user_id = currentUser.id;
   res.redirect(`/urls`);
 });
 
 app.get("/login", (req, res) => {
-  if(req.cookies.user_id){
+  if(req.session.user_id){
      return res.redirect("/urls");
   }
   const templateVars = {
-    username: users[req.cookies.user_id]
+    username: users[req.session.user_id]
   };  
   res.render("urls_login", templateVars);
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/urls");
 });
 
 
 //registration
 app.get("/register", (req, res) => {
-  if(req.cookies.user_id){
+  if(req.session.user_id){
     return res.redirect("/urls");
   }
   const templateVars = {
-    username: users[req.cookies.user_id]
+    username: users[req.session.user_id]
   };  
   res.render("urls_register", templateVars);
 });
