@@ -1,6 +1,7 @@
 //setup
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bcrypt = require("bcryptjs");
 const morgan = require ("morgan");
 const app = express();
 const PORT = 8080;
@@ -20,22 +21,15 @@ const generateRandomString = function() { //generates random string of 6 charact
   return x.join('');
 };
 
-const matchFromDatabase = function (key, input) {
+const matchExistingUser = function (inputEmail) {
   for (let user in users) {
-    if (users[user][key] === input) {
+    if (users[user].email === inputEmail) {
       return users[user];
     }
   }
   return null;
 };
 
-const matchExistingUser = function (inputEmail) {
-  return matchFromDatabase("email", inputEmail);
-};
-
-const matchExistingPassword = function (inputPassword) {
-  return matchFromDatabase("password", inputPassword);
-};
 
 const urlsForUser = function (id) {
   let x = {};
@@ -66,7 +60,7 @@ const users = {
   sfe2sg23rt23 : {
     id : 'sfe2sg23rt23',
     email : 'apple@com',
-    password : 'apple'
+    hashedPass : '$2a$10$3or6DQiNxnPfDJlE4Tdkr.mUTWY1suo4Lwl/Bwk.iglPHAQRF65Bq'
   }
 };
 
@@ -174,13 +168,15 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //account login and logout
 app.post("/login", (req, res) => {
+  console.log (req.body);
   let currentUser = matchExistingUser(req.body.email);
-  let currentPass = matchExistingPassword(req.body.password);
+  let currentPass = bcrypt.compareSync(req.body.password, currentUser.hashedPass);
+  console.log(currentPass);
   if (currentUser === null) {
-    return res.status(403).send("Invalid login information!")
+    return res.status(403).send("Invalid login information (username)!!")
   }
-  if (currentPass === null) {
-    return res.status(403).send("Invalid login information!")
+  if (currentPass === false) {
+    return res.status(403).send("Invalid login information (password)!!")
   }
   res.cookie("user_id", currentUser.id);
   res.redirect(`/urls`);
@@ -220,7 +216,9 @@ app.post("/register", (req, res) => {
     if (email.length === 0 || password.length === 0) {
       return res.status(400).send("Invalid registration information");
     }
-    users[id] = {id, email, password};
+    let hashedPass = bcrypt.hashSync(password, 10);
+    console.log(hashedPass);
+    users[id] = {id, email, hashedPass};
     res.cookie("user_id", id);
     res.redirect("/urls");
   } else {
