@@ -148,6 +148,15 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  if (!urlDatabase[req.params.id]){
+    return res.status(400).send("Shortened Link ID Does Not Exist!!");
+  }
+  if(!req.cookies.user_id){
+    return res.status(401).send("Shortened Link can only be deleted by Registered Users!!");
+  }
+  if(req.cookies.user_id !== urlDatabase[req.params.id].userID){
+    return res.status(401).send("Users can only delete their own links!!");
+  }
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
