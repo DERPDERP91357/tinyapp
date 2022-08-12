@@ -12,6 +12,7 @@ const {
   generateRandomString,
   matchExistingUser,
   urlsForUser,
+  arrayCheck,
   urlDatabase,
   users
 } = require("./helper");
@@ -113,8 +114,13 @@ app.put("/urls/:id", (req, res) => {   //take input from edit field on short lin
 app.get("/u/:id", (req, res) => {
   const URL = urlDatabase[req.params.id].longURL;
   urlDatabase[req.params.id].times ++;
+  if (req.session.userId) {
+  req.session.vistorid = req.session.userId;
+  }
   if(!req.session.vistorid){
   req.session.vistorid = generateRandomString();
+  }
+  if (!arrayCheck(req.session.vistorid, req.params.id, urlDatabase)){
   urlDatabase[req.params.id].uniqueVisitors.push(req.session.vistorid);
   }
   res.redirect(URL);

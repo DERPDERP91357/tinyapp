@@ -25,6 +25,17 @@ const urlsForUser = function(id, database) {
   return x;
 };
 
+//check if vistorid is in unique visitor array for link
+const arrayCheck = function (visitorId, linkId, database) {
+  let array = database[linkId].uniqueVisitors;
+  for (let member of array) {
+    if (member === visitorId){
+      return true;
+    }
+  }
+  return false;
+}
+
 //databases
 const urlDatabase = {
   b6UTxQ: {
@@ -59,6 +70,7 @@ module.exports = {
   matchExistingUser,
   generateRandomString,
   urlsForUser,
+  arrayCheck,
   urlDatabase,
   users
 };
