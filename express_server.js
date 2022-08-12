@@ -2,7 +2,6 @@
 const express = require('express');
 const sessionession = require('cookie-session');
 const bcrypt = require("bcryptjs");
-const morgan = require("morgan");
 const app = express();
 const PORT = 8080;
 
@@ -12,7 +11,6 @@ const {generateRandomString, matchExistingUser, urlsForUser} = require("./helper
 //middleware
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));//body  parser library to convert buffer to string
-app.use(morgan('dev'));
 //sets cookie session named 'session"
 app.use(sessionession({
   name: 'session',
