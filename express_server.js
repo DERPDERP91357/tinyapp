@@ -3,7 +3,6 @@ const express = require('express');
 const sessionession = require('cookie-session');
 const bcrypt = require("bcryptjs");
 const app = express();
-const morgan = require("morgan");
 const methodOverride = require('method-override');
 const PORT = 8080;
 
@@ -21,7 +20,6 @@ const {
 
 //middleware
 app.set("view engine", "ejs");
-app.use(morgan("dev"));
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: true }));//body  parser library to convert buffer to string
 //sets cookie session named 'session"
@@ -134,7 +132,6 @@ app.get("/u/:id", (req, res) => {
     status: guestStatus
   };
   urlDatabase[req.params.id].allVisits.push(visit);
-  console.log(urlDatabase[req.params.id].allVisits);
   res.redirect(URL);
 });
 
