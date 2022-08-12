@@ -9,7 +9,12 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 !["Individual Pages for Each Shortened Link"](https://github.com/DERPDERP91357/tinyapp/blob/main/docs/tinyapp%20individual.jpg?raw=true)
 - Shortened link pages feature link that may be shared with others!
--New links may be created by created the "Create New URL"
+- New links may be created by created the "Create New URL"
+- Site tracks link usage:
+  - total number of visits
+  - unique visitors
+  - logs type, partial id and time of every visit
+
 
 !["Registration Page"](https://github.com/DERPDERP91357/tinyapp/blob/main/docs/tiny%20app%20register.jpg?raw=true)
 

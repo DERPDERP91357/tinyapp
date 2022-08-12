@@ -13,6 +13,8 @@ const {
   matchExistingUser,
   urlsForUser,
   arrayCheck,
+  dateNow,
+  idString,
   urlDatabase,
   users
 } = require("./helper");
@@ -92,7 +94,8 @@ app.get("/urls/:id", (req, res) => {
     longURL: urlDatabase[req.params.id].longURL,
     userObj: users[req.session.userId],
     times: urlDatabase[req.params.id].times,
-    unique : urlDatabase[req.params.id].uniqueVisitors.length
+    unique : urlDatabase[req.params.id].uniqueVisitors.length,
+    visit : urlDatabase[req.params.id].allVisits
   };
   res.render("urls_show", templateVars);
 });
@@ -113,9 +116,11 @@ app.put("/urls/:id", (req, res) => {   //take input from edit field on short lin
 //redirection link when shortURL id is clicked on its unique page
 app.get("/u/:id", (req, res) => {
   const URL = urlDatabase[req.params.id].longURL;
+  let guestStatus = false;
   urlDatabase[req.params.id].times ++;
   if (req.session.userId) {
   req.session.vistorid = req.session.userId;
+  guestStatus = true;
   }
   if(!req.session.vistorid){
   req.session.vistorid = generateRandomString();
@@ -123,8 +128,17 @@ app.get("/u/:id", (req, res) => {
   if (!arrayCheck(req.session.vistorid, req.params.id, urlDatabase)){
   urlDatabase[req.params.id].uniqueVisitors.push(req.session.vistorid);
   }
+  let visit = {
+    date: dateNow(),
+    tempId: idString(req.session.vistorid),
+    status: guestStatus
+  };
+  urlDatabase[req.params.id].allVisits.push(visit);
+  console.log(urlDatabase[req.params.id].allVisits);
   res.redirect(URL);
 });
+
+
 
 //deletes links from delete button on main /urls page
 app.delete("/urls/:id/delete", (req, res) => {

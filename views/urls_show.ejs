@@ -38,6 +38,31 @@
         <!-- edit link form end -->
       </div>
     </div>
+    <!-- table to log visitor type, partial id and time of visit -->
+    <div>
+      <table class="table table-info">
+        <thead>
+          <tr>
+            <th scope="col">User Type</th>
+            <th scope="col">User ID</th>
+            <th class = "div1" scope="col">Time of Visit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (let each of visit) { %>
+          <tr>
+            <% if (each.status) { %>
+            <td>User</td>
+            <% } else { %>
+            <td>Guest</td>
+            <% } %>
+            <td><%= each.tempId %></td>
+            <td><%= each.date %></td>
+            <% } %>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <script
     src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
