@@ -91,7 +91,7 @@ app.get("/urls/:id", (req, res) => {
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
     userObj: users[req.session.userId],
-    times: urlDatabase[req.params.id].times,
+    times: urlDatabase[req.params.id].allVisits.length, //tracks number of link uses
     unique : urlDatabase[req.params.id].uniqueVisitors.length,
     visit : urlDatabase[req.params.id].allVisits
   };
@@ -115,8 +115,7 @@ app.put("/urls/:id", (req, res) => {   //take input from edit field on short lin
 app.get("/u/:id", (req, res) => {
   const URL = urlDatabase[req.params.id].longURL;
   let guestStatus = false;
-  urlDatabase[req.params.id].times ++;
-  if (req.session.userId) {
+  if (req.session.userId) {  //sets visitorid cookie for unique visitors
     req.session.vistorid = req.session.userId;
     guestStatus = true;
   }
@@ -126,7 +125,7 @@ app.get("/u/:id", (req, res) => {
   if (!arrayCheck(req.session.vistorid, req.params.id, urlDatabase)) {
     urlDatabase[req.params.id].uniqueVisitors.push(req.session.vistorid);
   }
-  let visit = {
+  let visit = { //logs the details of every visit
     date: dateNow(),
     tempId: idString(req.session.vistorid),
     status: guestStatus
