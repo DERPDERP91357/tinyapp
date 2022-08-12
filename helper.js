@@ -1,3 +1,5 @@
+const uuid = require("uuid");
+
 // function to return user object based on email input
 const matchExistingUser = function(inputEmail, database) {
   for (let user in database) {
@@ -8,12 +10,8 @@ const matchExistingUser = function(inputEmail, database) {
 };
 
 //random string generator for short link IDs
-const generateRandomString = function() { //generates random string of 6 characters
-  let x = [];
-  for (let i = 0; i < 6; i++) {
-    x.push(Math.floor(Math.random() * 36).toString(36));
-  }
-  return x.join('');
+const generateRandomString = function() { //generates random uuid v4 string
+  return uuid.v4();
 };
 
 //filter for short link object based on id input
@@ -27,5 +25,40 @@ const urlsForUser = function(id, database) {
   return x;
 };
 
+//databases
+const urlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "sfe2sg23rt23",
+    times : 0,
+    uniqueVisitors: [],
+    allVisits : [{
+    }]
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "sfe2sg23rt23",
+    times : 0
+  },
+  iadf0r: {
+    longURL: "https://www.wanikani.com",
+    userID: "afe2sg23rt23",
+    times : 0
+  }
+};
 
-module.exports = {matchExistingUser, generateRandomString, urlsForUser};
+const users = {
+  sfe2sg23rt23 : {
+    id : 'sfe2sg23rt23',
+    email : 'apple@com',
+    hashedPass : '$2a$10$3or6DQiNxnPfDJlE4Tdkr.mUTWY1suo4Lwl/Bwk.iglPHAQRF65Bq'
+  }
+};
+
+module.exports = {
+  matchExistingUser,
+  generateRandomString,
+  urlsForUser,
+  urlDatabase,
+  users
+};

@@ -16,6 +16,9 @@
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+        <!-- analytics for times visited and number of unique visitors -->
+        <h6>Times visited: <%= times %></h6>
+        <h6>Unique Visitors: <%= unique %></h6>
 
         <!-- link to external site (from the long URL) -->
         <p class="card-text">
@@ -28,7 +31,7 @@
      
       <div>
         <!-- edit link form start -->
-        <form method="POST" action= "/urls/<%= id %>">
+        <form method="POST" action= "/urls/<%= id %>?_method=PUT">
           <input type= url name = "new_URL" required>
           <button type="submit" class="btn btn-primary">Edit</button>
         </form>

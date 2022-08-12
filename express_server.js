@@ -3,13 +3,23 @@ const express = require('express');
 const sessionession = require('cookie-session');
 const bcrypt = require("bcryptjs");
 const app = express();
+const morgan = require("morgan");
+const methodOverride = require('method-override');
 const PORT = 8080;
 
-//functions
-const {generateRandomString, matchExistingUser, urlsForUser} = require("./helper");
+//functions and databases
+const {
+  generateRandomString,
+  matchExistingUser,
+  urlsForUser,
+  urlDatabase,
+  users
+} = require("./helper");
 
 //middleware
 app.set("view engine", "ejs");
+app.use(morgan("dev"));
+app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: true }));//body  parser library to convert buffer to string
 //sets cookie session named 'session"
 app.use(sessionession({
@@ -17,31 +27,6 @@ app.use(sessionession({
   keys: ['1a535d9f-a610-4f90-b613-204dcd956328'], //key generated using 'npx uuid' from the command line
   maxAge: 24 * 60 * 60 * 1000
 }));
-
-
-//databases
-const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "sfe2sg23rt23",
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "sfe2sg23rt23",
-  },
-  iadf0r: {
-    longURL: "https://www.wanikani.com",
-    userID: "afe2sg23rt23",
-  }
-};
-
-const users = {
-  sfe2sg23rt23 : {
-    id : 'sfe2sg23rt23',
-    email : 'apple@com',
-    hashedPass : '$2a$10$3or6DQiNxnPfDJlE4Tdkr.mUTWY1suo4Lwl/Bwk.iglPHAQRF65Bq'
-  }
-};
 
 //misc test pages used in initial setup
 app.get("/", (req, res) => {
@@ -104,11 +89,13 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
-    userObj: users[req.session.userId]
+    userObj: users[req.session.userId],
+    times: urlDatabase[req.params.id].times,
+    unique : urlDatabase[req.params.id].uniqueVisitors.length
   };
   res.render("urls_show", templateVars);
 });
-app.post("/urls/:id", (req, res) => {   //take input from edit field on short link specific pages to change databaes
+app.put("/urls/:id", (req, res) => {   //take input from edit field on short link specific pages to change databaes
   if (!urlDatabase[req.params.id]) {
     return res.status(400).send("Shortened Link ID Does Not Exist!!");
   }
@@ -125,11 +112,16 @@ app.post("/urls/:id", (req, res) => {   //take input from edit field on short li
 //redirection link when shortURL id is clicked on its unique page
 app.get("/u/:id", (req, res) => {
   const URL = urlDatabase[req.params.id].longURL;
+  urlDatabase[req.params.id].times ++;
+  if(!req.session.vistorid){
+  req.session.vistorid = generateRandomString();
+  urlDatabase[req.params.id].uniqueVisitors.push(req.session.vistorid);
+  }
   res.redirect(URL);
 });
 
 //deletes links from delete button on main /urls page
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id/delete", (req, res) => {
   if (!urlDatabase[req.params.id]) {
     return res.status(400).send("Shortened Link ID Does Not Exist!!");
   }
@@ -185,7 +177,7 @@ app.get("/register", (req, res) => {
 });
 app.post("/register", (req, res) => {   //takes input and modifies global users object
   if (!matchExistingUser(req.body.email, users)) {
-    let id = generateRandomString() + generateRandomString();
+    let id = generateRandomString();
     let {email, password} = req.body;
     if (email.length === 0 || password.length === 0) {
       return res.status(400).send("Invalid registration information");
