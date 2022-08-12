@@ -7,9 +7,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 !["Main Url Page"](https://github.com/DERPDERP91357/tinyapp/blob/main/docs/tiny%20app%20main%20page.jpg?raw=true)
 -Users can delete and edit links tied to their account using the associated buttons!
 
-
 !["Individual Pages for Each Shortened Link"](https://github.com/DERPDERP91357/tinyapp/blob/main/docs/tinyapp%20individual.jpg?raw=true)
 -Shortened link pages feature link that may be shared with others!
+-New links may be created by created the "Create New URL"
 
 !["Registration Page"](https://github.com/DERPDERP91357/tinyapp/blob/main/docs/tiny%20app%20register.jpg?raw=true)
 
