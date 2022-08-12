@@ -1,3 +1,4 @@
+// function to return user object based on email input
 const matchExistingUser = function(inputEmail, database) {
   for (let user in database) {
     if (database[user].email === inputEmail) {
@@ -6,6 +7,7 @@ const matchExistingUser = function(inputEmail, database) {
   }
 };
 
+//random string generator for short link IDs
 const generateRandomString = function() { //generates random string of 6 characters
   let x = [];
   for (let i = 0; i < 6; i++) {
@@ -14,7 +16,7 @@ const generateRandomString = function() { //generates random string of 6 charact
   return x.join('');
 };
 
-
+//filter for short link object based on id input
 const urlsForUser = function(id, database) {
   let x = {};
   for (let member in database) {

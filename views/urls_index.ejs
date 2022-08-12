@@ -22,6 +22,7 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
+      <!-- Main table for urls links 🔽🔽🔽🔽-->
       <% if (userObj) { %>
         <table class="table table-info">
           <thead>
@@ -54,6 +55,8 @@
             <a href = '/urls/new'>Make new shortened link!</a>
           </tbody>
         </table>
+        <!-- Main table for urls links 🔼🔼🔼🔼-->
+        <!-- alternative message when not logged on  🔽🔽🔽🔽-->
       <% } else { %>
         <h4>You are not Logged In. Please <a href="/login">Login</a> or <a href="/register">Register</a> to Create Links!!</h4>
       <% } %>

@@ -16,16 +16,23 @@
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+
+        <!-- link to external site (from the long URL) -->
         <p class="card-text">
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
       </div>
+
+      <!-- link to make new links form -->
       <div class="card-footer text-muted"><a href = '/urls/new'>Make new shortened link!</a></div>
+     
       <div>
+        <!-- edit link form start -->
         <form method="POST" action= "/urls/<%= id %>">
           <input type= url name = "new_URL" required>
           <button type="submit" class="btn btn-primary">Edit</button>
         </form>
+        <!-- edit link form end -->
       </div>
     </div>
     <script

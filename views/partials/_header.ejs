@@ -26,6 +26,7 @@
       <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
     </div>
   </div>
+<!-- implments user email on button (visual only) and logout button when logged in -->
   <% if(userObj){ %>
   <div id = "div1">
     <button id ="user" type="button" class="btn btn-outline-primary btn-lg">Logged in as: <b><%= userObj.email %></b></button>
@@ -35,6 +36,7 @@
       <button type="submit" class="btn btn-secondary">Logout</button>
     </form>
   </div>
+  <!-- implements login and register buttons if logged out -->
   <% } else {%>
   <div>
     <a href="/register"><button class="btn btn-secondary">Register</button></a>
