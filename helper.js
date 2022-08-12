@@ -26,23 +26,23 @@ const urlsForUser = function(id, database) {
 };
 
 //check if vistorid is in unique visitor array for link
-const arrayCheck = function (visitorId, linkId, database) {
+const arrayCheck = function(visitorId, linkId, database) {
   let array = database[linkId].uniqueVisitors;
   for (let member of array) {
-    if (member === visitorId){
+    if (member === visitorId) {
       return true;
     }
   }
   return false;
-}
+};
 
 //Date
-const dateNow = function () {
-  return new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto' })
+const dateNow = function() {
+  return new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto' });
 };
 
 //Partial Id string
-const idString = function (string) {
+const idString = function(string) {
   let x = string.slice(0, 8);
   return x + "-****-****";
 };

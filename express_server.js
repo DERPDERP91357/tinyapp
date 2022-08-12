@@ -119,14 +119,14 @@ app.get("/u/:id", (req, res) => {
   let guestStatus = false;
   urlDatabase[req.params.id].times ++;
   if (req.session.userId) {
-  req.session.vistorid = req.session.userId;
-  guestStatus = true;
+    req.session.vistorid = req.session.userId;
+    guestStatus = true;
   }
-  if(!req.session.vistorid){
-  req.session.vistorid = generateRandomString();
+  if (!req.session.vistorid) {
+    req.session.vistorid = generateRandomString();
   }
-  if (!arrayCheck(req.session.vistorid, req.params.id, urlDatabase)){
-  urlDatabase[req.params.id].uniqueVisitors.push(req.session.vistorid);
+  if (!arrayCheck(req.session.vistorid, req.params.id, urlDatabase)) {
+    urlDatabase[req.params.id].uniqueVisitors.push(req.session.vistorid);
   }
   let visit = {
     date: dateNow(),
