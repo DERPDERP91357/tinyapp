@@ -30,18 +30,21 @@ app.use(sessionession({
 }));
 
 //misc test pages used in initial setup
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
 app.get("/urls.json", (req, res) => {
   res.send(urlDatabase);
 });
-
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+
+//alternative main page
+app.get("/", (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect("/login");
+  } 
+  res.redirect("/urls");
+});
 
 //main page
 app.get("/urls", (req, res) => {
