@@ -58,7 +58,10 @@ app.post("/urls", (req, res) => {   //referenced by make new urls page
   let x = generateRandomString();
   urlDatabase[x] = {
     longURL : req.body.longURL,
-    userID : req.session.userId
+    userID : req.session.userId,
+    times : 0,
+    uniqueVisitors: [],
+    allVisits : []
   };
   res.redirect(`/urls/${x}`);
 });

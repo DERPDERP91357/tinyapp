@@ -9,6 +9,11 @@
       crossorigin="anonymous"
     />
     <title>URL - TinyApp Example</title>
+    <style>
+      .card-text {
+        margin-top: 10px;
+      }
+    </style>
   </head>
   <body>
     <%- include('partials/_header') %>
@@ -17,12 +22,23 @@
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <!-- analytics for times visited and number of unique visitors -->
-        <h6>Times visited: <%= times %></h6>
-        <h6>Unique Visitors: <%= unique %></h6>
+        
+          <h6>Times visited: 
+            <% if (times) { %>
+              <%= times %>
+            <% } else { %>
+              <%= 0 %></h6>
+            <% } %>
+          <h6>Unique Visitors: 
+            <% if (unique) { %>
+              <%= unique %>
+            <% } else { %>
+              <%= 0 %></h6>
+            <% } %>
 
         <!-- link to external site (from the long URL) -->
         <p class="card-text">
-          Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
+          Short URL ID: <a href="/u/<%= id %>">/u/<%= id %></a>
         </p>
       </div>
 
